@@ -86,6 +86,51 @@ H5P.DragNBarElement=function(s,o){function t(t,i,e){var n=this;o.call(this),this
             <div
                 style=""
                 class="h5p-content lag" data-content-id="2502346990"></div>        
-        </div>        
+        </div>      
+        <script>
+            H5P.externalDispatcher.on('xAPI', function (event) {
+                        
+                        console.log(event.data.statement);
+                        var dados = JSON.stringify(event.data.statement);
+                     getData.postMessage(dados);
+                      
+            
+            }); 
+        </script>
+        <script>
+          H5P.externalDispatcher.trigger('initialized', H5P);
+          H5P.externalDispatcher.on('initialized', (event) => {
+        
+            var video = H5P.instances[0].video;
+            var intervalo;
+        
+              video.on('stateChange', function (e) {
+              switch (e.data) {
+                case H5P.Video.BUFFERING:
+                  clearInterval(intervalo);
+                  console.log('done');
+                  break;
+        
+                case H5P.Video.PLAYING:
+                intervalo = setInterval(function(){ 
+               getTime.postMessage(video.getCurrentTime());
+                }, 30);
+                console.log(intervalo);
+                  break;
+        
+                case H5P.Video.PAUSED:
+                clearInterval(intervalo);
+        
+                  break;
+        
+                case H5P.Video.ENDED:
+                clearInterval(intervalo);
+                  break;
+              }
+            });
+        });
+        
+        
+        </script>  
     </body>
 </html>
